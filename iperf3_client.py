@@ -34,8 +34,8 @@ def run_iperf(server_ip, client_ip, duration=30):
         return None
 
 # 定义IP地址范围
-server_ips = [f"192.168.31.{i}" for i in range(20, 28)]  # 192.168.31.20 - 192.168.31.27
-client_ips = [f"192.168.31.{i}" for i in range(30, 38)]  # 192.168.31.30 - 192.168.31.37
+server_ips = [f"192.168.5.{i}" for i in range(30, 38)]  # 192.168.5.20 - 192.168.5.27
+client_ips = [f"192.168.5.{i}" for i in range(20, 28)]  # 192.168.5.30 - 192.168.5.37
 
 # 运行测试
 for server_ip, client_ip in zip(server_ips, client_ips):
