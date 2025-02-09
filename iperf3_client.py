@@ -2,7 +2,7 @@ import subprocess
 
 def run_iperf(server_ip, client_ip, duration=30):
     """
-    运行iperf3测试的函数，介于服务器和客户端之间。
+    运行iperf3测试，介于服务器和客户端之间。
     :param server_ip: 服务器的IP地址
     :param client_ip: 客户端的IP地址
     :param duration: iperf测试的持续时间（秒）
@@ -23,23 +23,23 @@ def run_iperf(server_ip, client_ip, duration=30):
 
         # 检查测试是否成功
         if result.returncode == 0:
-            print("测试成功完成。")
+            print(f"测试从 {client_ip} 到 {server_ip} 成功完成。")
             return result.stdout
         else:
-            print("测试运行错误：")
+            print(f"测试从 {client_ip} 到 {server_ip} 出错：")
             print(result.stderr)
             return None
     except Exception as e:
         print(f"执行iperf3命令时发生错误: {e}")
         return None
 
-# 示例用法
-server_ip = '192.168.5.30'
-client_ip = '192.168.5.20'
-duration = 30  # 测试时间为30秒
+# 定义IP地址范围
+server_ips = [f"192.168.31.{i}" for i in range(20, 28)]  # 192.168.31.20 - 192.168.31.27
+client_ips = [f"192.168.31.{i}" for i in range(30, 38)]  # 192.168.31.30 - 192.168.31.37
 
 # 运行测试
-output = run_iperf(server_ip, client_ip, duration)
-if output:
-    print("测试输出：")
-    print(output)
+for server_ip, client_ip in zip(server_ips, client_ips):
+    output = run_iperf(server_ip, client_ip)
+    if output:
+        print("测试输出：")
+        print(output)
