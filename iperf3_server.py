@@ -29,7 +29,7 @@ def start_iperf_server(ip, port=5201):
 
 def manage_servers():
     threads = []
-    ips = ["192.168.5." + str(i) for i in range(30, 38)]
+    ips = ["192.168.5." + str(i) for i in range(30, 31)]
     for ip in ips:
         port = 5201
         thread = threading.Thread(target=start_iperf_server, args=(ip, port))
