@@ -1,42 +1,46 @@
 import subprocess
+import datetime
+import os
 import threading
 
-def start_iperf_server(ip, port):
-    """
-    在指定IP和端口上启动iperf3服务器。
-    :param ip: 服务器的IP地址
-    :param port: 监听的端口
-    """
-    try:
-        command = [
-            'iperf3',
-            '-s',  # 服务端模式
-            '-B', ip,  # 绑定到特定的IP
-            '-p', str(port),  # 指定监听端口
-            '--json'  # 输出结果为JSON格式
-        ]
-        print(f"启动iperf3服务端在 {ip}:{port}")
-        subprocess.run(command, text=True)
-    except Exception as e:
-        print(f"在 {ip}:{port} 启动iperf3服务端时发生错误: {e}")
+def save_log(output, ip, port):
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"{ip}_{port}_{current_time}.log"
+    with open(filename, 'w') as file:
+        file.write(output)
+    print(f"日志已保存到 {filename}")
 
-def main():
-    # 定义IP地址和端口
-    base_port = 5201
-    ips = [f"192.168.5.{i}" for i in range(30, 38)]  # 192.168.5.20 - 192.168.5.27
-    threads = []
+def start_iperf_server(ip, port=5201):
+    command = [
+        'iperf3',
+        '-s',
+        '-B', ip,
+        '-p', str(port),
+        '--json'
+    ]
+    
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
+    print(f"在 {ip}:{port} 上启动iperf3服务端...")
+    
+    def monitor():
+        print(f"iperf3服务端已启动在 {ip}:{port}。请输入'3'停止。")
+        output = ""
+        while True:
+            action = input()
+            if action == '3':
+                process.terminate()  # 使用terminate方法来停止进程
+                stdout, stderr = process.communicate()
+                output += stdout
+                if stderr:
+                    output += "\n错误信息：\n" + stderr
+                save_log(output, ip, port)
+                print("iperf3服务端已停止。")
+                break
 
-    # 为每个IP启动一个服务端实例
-    for index, ip in enumerate(ips):
-        port = base_port + index
-        thread = threading.Thread(target=start_iperf_server, args=(ip, port))
-        thread.start()
-        threads.append(thread)
-
-    # 等待所有线程完成
-    for thread in threads:
-        thread.join()
+    thread = threading.Thread(target=monitor)
+    thread.start()
 
 if __name__ == "__main__":
-    main()
-    #pss
+    ips = ["192.168.5." + str(i) for i in range(20, 238)]
+    for ip in ips:
+        start_iperf_server(ip)
