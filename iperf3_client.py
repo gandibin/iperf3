@@ -49,8 +49,20 @@ def thread_function(server_ip, client_ip, thread_count):
 
 def manage_clients():
     threads = []
-    server_ips = [f"192.168.5.{i}" for i in range(30, 38)]  # 服务器的IP地址范围
-    client_ips = [f"192.168.5.{i}" for i in range(20, 28)]  # 客户端的IP地址范围
+    
+    # 获取用户输入的服务器和客户端数量
+    try:
+        ip_count = int(input("请输入测试的IP地址数量（1-8）："))
+        if ip_count < 1 or ip_count > 8:
+            print("请输入一个有效的数量（1到8之间）！")
+            return
+    except ValueError:
+        print("无效输入！请输入数字。")
+        return
+    
+    # 动态生成 IP 地址范围
+    server_ips = [f"192.168.5.{i}" for i in range(30, 30 + ip_count)]  # 根据输入的数量生成服务器IP地址
+    client_ips = [f"192.168.5.{i}" for i in range(20, 20 + ip_count)]  # 根据输入的数量生成客户端IP地址
     thread_count = len(server_ips)  # 线程数和服务器数相同
     
     for server_ip, client_ip in zip(server_ips, client_ips):
