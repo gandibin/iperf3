@@ -1,5 +1,13 @@
 @echo off
-echo deleting all logfile on this folder
-del *.log /Q
-echo delete_complate
+echo Moving all log files to the log folder...
+
+REM Check if the log folder exists, if not, create it
+if not exist "log" (
+    mkdir log
+)
+
+REM Move all .log files to the log folder
+move *.log log\ >nul
+
+echo Move completed.
 pause

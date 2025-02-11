@@ -2,10 +2,10 @@ import subprocess
 import threading
 import datetime
 
-def save_log(output, client_ip, server_ip):
-    """保存输出到日志文件"""
+def save_log(output, client_ip, server_ip, thread_count):
+    """保存输出到日志文件，并将线程数量添加到文件名中"""
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"iperf3_test_{client_ip}_to_{server_ip}_{current_time}.log"
+    filename = f"iperf3_test_{client_ip}_to_{server_ip}_{current_time}_threads_{thread_count}.log"
     with open(filename, 'w') as file:
         file.write(output)
     print(f"日志已保存到 {filename}")
@@ -33,27 +33,28 @@ def run_iperf(server_ip, client_ip, duration=30):
         # 检查测试是否成功
         if result.returncode == 0:
             print(f"测试从 {client_ip} 到 {server_ip} 成功完成。")
-            save_log(result.stdout, client_ip, server_ip)
             return result.stdout
         else:
             print(f"测试从 {client_ip} 到 {server_ip} 出错：")
             print(result.stderr)
-            save_log(result.stderr, client_ip, server_ip)
             return None
     except Exception as e:
         print(f"执行iperf3命令时发生错误: {e}")
         return None
 
-def thread_function(server_ip, client_ip):
-    run_iperf(server_ip, client_ip)
+def thread_function(server_ip, client_ip, thread_count):
+    output = run_iperf(server_ip, client_ip)
+    if output:
+        save_log(output, client_ip, server_ip, thread_count)
 
 def manage_clients():
     threads = []
-    server_ips = [f"192.168.5.{i}" for i in range(30, 38)]
-    client_ips = [f"192.168.5.{i}" for i in range(20, 28)]
+    server_ips = [f"192.168.5.{i}" for i in range(30, 38)]  # 服务器的IP地址范围
+    client_ips = [f"192.168.5.{i}" for i in range(20, 28)]  # 客户端的IP地址范围
+    thread_count = len(server_ips)  # 线程数和服务器数相同
     
     for server_ip, client_ip in zip(server_ips, client_ips):
-        thread = threading.Thread(target=thread_function, args=(server_ip, client_ip))
+        thread = threading.Thread(target=thread_function, args=(server_ip, client_ip, thread_count))
         threads.append(thread)
         thread.start()
     
