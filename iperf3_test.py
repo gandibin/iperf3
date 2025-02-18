@@ -13,10 +13,10 @@ class Iperf3Test:
         self.test_choice = test_choice
 
     @staticmethod
-    def save_log(output, ip, server_ip, test_type):
+    def save_log(output, client_ip, server_ip, test_type):
         """保存输出到JSON日志文件，并将服务端数量添加到文件名中"""
         current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"iperf3_{ip}_to_{server_ip}_{test_type}_{current_time}.json"
+        filename = f"iperf3_{client_ip}_to_{server_ip}_{test_type}_{current_time}.json"
         with open(filename, 'w') as file:
             json.dump(output, file, indent=4)
         print(f"日志已保存到 {filename}")
