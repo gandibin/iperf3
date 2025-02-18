@@ -33,15 +33,16 @@ class Iperf3Test:
 
     def test_udp(self):
         """进行UDP测试"""
-        print("选择UDP测试...")
-        bandwidth = input("请输入带宽（例如10M，100M，1G）：")
+        bandwidth = self.user_input.get_bandwidth()
         self.run_client("UDP", bandwidth)
 
     def test_multithread(self):
         """进行多线程测试"""
-        print("选择多线程测试...")
-        threads = int(input("请输入并发线程数："))
+        threads = self.user_input.get_threads()
         self.run_client("TCP", threads=threads)
+
+
+
 
     def test_bidirectional(self):
         """进行双向测试"""
