@@ -26,7 +26,7 @@ class Iperf3Test:
         print(f"正在启动iperf3客户端，{client_ip} 连接到 {server_ip}...")
         # 根据测试类型选择不同的命令
         if self.test_choice == '1':  # TCP 测试
-            command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-B", client_ip]
+            command = ["iperf3", "-c", server_ip, "-t", "5", "--json", "-B", client_ip]
             testype = "TCP"
         elif self.test_choice == '2':  # UDP 测试
             command = ["iperf3", "-c", server_ip, "-u", "-b", self.bandwidth, "-t", "60", "--json", "-B", client_ip]
@@ -47,7 +47,7 @@ class Iperf3Test:
         try:
             json_output = json.loads(result.stdout)
             # 保存日志
-            Iperf3Test.save_log(json_output, client_ip, server_ip, testype)
+            self.save_log(json_output, client_ip, server_ip, testype)
         except json.JSONDecodeError:
             print(f"无法解析JSON输出，跳过保存 {client_ip} 到 {server_ip} 的日志...")
 
