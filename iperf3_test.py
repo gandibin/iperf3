@@ -12,44 +12,44 @@ class Iperf3Test:
         self.threads = threads
         self.test_choice = test_choice
 
-    @staticmethod
-    def save_log(output, client_ip, server_ip, test_type):
+    def save_log(self, output, client_ip, server_ip, test_type):
         """保存输出到JSON日志文件，并将服务端数量添加到文件名中"""
         current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"iperf3_{client_ip}_to_{server_ip}_{test_type}_{current_time}.json"
+        ports = str(len(self.client_ips))
+        filename = f"{test_type}_thread_{ports}_{client_ip}_to_{server_ip}_{current_time}.json"
         with open(filename, 'w') as file:
             json.dump(output, file, indent=4)
         print(f"日志已保存到 {filename}")
 
-def run_client(self, client_ip, server_ip):
-    """客户端进行iperf3测试，根据测试类型传入不同的命令"""
-    print(f"正在启动iperf3客户端，{client_ip} 连接到 {server_ip}...")
-    # 根据测试类型选择不同的命令
-    if self.test_choice == '1':  # TCP 测试
-        command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-B", client_ip]
-        testype = "TCP"
-    elif self.test_choice == '2':  # UDP 测试
-        command = ["iperf3", "-c", server_ip, "-u", "-b", self.bandwidth, "-t", "60", "--json", "-B", client_ip]
-        if self.threads > 1:
-            command.extend(["-P", str(self.threads)])  # 仅在多线程情况下加-P
-        testype = "UDP"
-    elif self.test_choice == '3':  # 多线程测试
-        command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-P", str(self.threads), "-B", client_ip]
-        testype = "multithread"
-    elif self.test_choice == '4':  # 双向测试
-        command = ["iperf3", "-c", server_ip, "-d", "-t", "60", "--json", "-B", client_ip]
-        testype = "bidirectional"
-    else:
-        print("无效的测试类型。")
-        return
-    # 执行命令并获取输出
-    result = subprocess.run(command, capture_output=True, text=True)
-    try:
-        json_output = json.loads(result.stdout)
-        # 保存日志
-        Iperf3Test.save_log(json_output, client_ip, server_ip, testype)
-    except json.JSONDecodeError:
-        print(f"无法解析JSON输出，跳过保存 {client_ip} 到 {server_ip} 的日志...")
+    def run_client(self, client_ip, server_ip):
+        """客户端进行iperf3测试，根据测试类型传入不同的命令"""
+        print(f"正在启动iperf3客户端，{client_ip} 连接到 {server_ip}...")
+        # 根据测试类型选择不同的命令
+        if self.test_choice == '1':  # TCP 测试
+            command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-B", client_ip]
+            testype = "TCP"
+        elif self.test_choice == '2':  # UDP 测试
+            command = ["iperf3", "-c", server_ip, "-u", "-b", self.bandwidth, "-t", "60", "--json", "-B", client_ip]
+            if self.threads > 1:
+                command.extend(["-P", str(self.threads)])  # 仅在多线程情况下加-P
+            testype = "UDP"
+        elif self.test_choice == '3':  # 多线程测试
+            command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-P", str(self.threads), "-B", client_ip]
+            testype = "multithread"
+        elif self.test_choice == '4':  # 双向测试
+            command = ["iperf3", "-c", server_ip, "-d", "-t", "60", "--json", "-B", client_ip]
+            testype = "bidirectional"
+        else:
+            print("无效的测试类型。")
+            return
+        # 执行命令并获取输出
+        result = subprocess.run(command, capture_output=True, text=True)
+        try:
+            json_output = json.loads(result.stdout)
+            # 保存日志
+            Iperf3Test.save_log(json_output, client_ip, server_ip, testype)
+        except json.JSONDecodeError:
+            print(f"无法解析JSON输出，跳过保存 {client_ip} 到 {server_ip} 的日志...")
 
 
     def test_tcp(self):
