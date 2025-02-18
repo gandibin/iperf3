@@ -1,57 +1,138 @@
 import subprocess
+import json
+import threading
+import time
+import datetime
 
 class Iperf3Test:
-    def __init__(self, ip=None):
-        self.ip = ip
+    def __init__(self, server_ips, client_ips, bandwidth, threads, test_choice):
+        self.server_ips = server_ips
+        self.client_ips = client_ips
+        self.bandwidth = bandwidth
+        self.threads = threads
+        self.test_choice = test_choice
 
     @staticmethod
-    def run_server():
-        """启动iperf3服务器"""
-        print("正在启动iperf3服务器...")
-        subprocess.run(["iperf3", "-s"])
+    def save_log(output, ip, server_ip, test_type):
+        """保存输出到JSON日志文件，并将服务端数量添加到文件名中"""
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"iperf3_{ip}_to_{server_ip}_{test_type}_{current_time}.json"
+        with open(filename, 'w') as file:
+            json.dump(output, file, indent=4)
+        print(f"日志已保存到 {filename}")
 
-    def run_client(self, protocol, bandwidth=None, time=10, threads=1, bidirectional=False):
-        """启动iperf3客户端"""
-        print(f"正在启动iperf3客户端，连接到 {self.ip}...")
-        command = ["iperf3", "-c", self.ip, "-t", str(time), "-P", str(threads)]
+def run_client(self, client_ip, server_ip):
+    """客户端进行iperf3测试，根据测试类型传入不同的命令"""
+    print(f"正在启动iperf3客户端，{client_ip} 连接到 {server_ip}...")
+    # 根据测试类型选择不同的命令
+    if self.test_choice == '1':  # TCP 测试
+        command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-B", client_ip]
+        testype = "TCP"
+    elif self.test_choice == '2':  # UDP 测试
+        command = ["iperf3", "-c", server_ip, "-u", "-b", self.bandwidth, "-t", "60", "--json", "-B", client_ip]
+        if self.threads > 1:
+            command.extend(["-P", str(self.threads)])  # 仅在多线程情况下加-P
+        testype = "UDP"
+    elif self.test_choice == '3':  # 多线程测试
+        command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-P", str(self.threads), "-B", client_ip]
+        testype = "multithread"
+    elif self.test_choice == '4':  # 双向测试
+        command = ["iperf3", "-c", server_ip, "-d", "-t", "60", "--json", "-B", client_ip]
+        testype = "bidirectional"
+    else:
+        print("无效的测试类型。")
+        return
+    # 执行命令并获取输出
+    result = subprocess.run(command, capture_output=True, text=True)
+    try:
+        json_output = json.loads(result.stdout)
+        # 保存日志
+        Iperf3Test.save_log(json_output, client_ip, server_ip, testype)
+    except json.JSONDecodeError:
+        print(f"无法解析JSON输出，跳过保存 {client_ip} 到 {server_ip} 的日志...")
 
-        if protocol == "UDP":
-            command.append("-u")
-            if bandwidth:
-                command.extend(["-b", bandwidth])
-            command.append("-i 1")  # 每秒报告一次丢包率和延迟
-
-        if bidirectional:
-            command.append("-d")  # 启动双向测试
-
-        subprocess.run(command)
 
     def test_tcp(self):
         """进行TCP测试"""
         print("选择TCP测试...")
-        self.run_client("TCP")
+        threads = []
+        for client_ip, server_ip in zip(self.client_ips, self.server_ips):
+            thread = threading.Thread(target=self.run_client, args=(client_ip, server_ip))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()  # 等待所有线程完成
 
     def test_udp(self):
         """进行UDP测试"""
-        bandwidth = self.user_input.get_bandwidth()
-        self.run_client("UDP", bandwidth)
+        print("选择UDP测试...")
+        threads = []
+        for client_ip, server_ip in zip(self.client_ips, self.server_ips):
+            thread = threading.Thread(target=self.run_client, args=(client_ip, server_ip))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()  # 等待所有线程完成
 
     def test_multithread(self):
         """进行多线程测试"""
-        threads = self.user_input.get_threads()
-        self.run_client("TCP", threads=threads)
+        print("选择多线程测试...")
+        threads = []
+        for client_ip, server_ip in zip(self.client_ips, self.server_ips):
+            thread = threading.Thread(target=self.run_client, args=(client_ip, server_ip))
+            threads.append(thread)
+            thread.start()
 
-
-
+        for thread in threads:
+            thread.join()  # 等待所有线程完成
 
     def test_bidirectional(self):
         """进行双向测试"""
         print("选择双向测试...")
-        self.run_client("TCP", bidirectional=True)
+        threads = []
+        for client_ip, server_ip in zip(self.client_ips, self.server_ips):
+            thread = threading.Thread(target=self.run_client, args=(client_ip, server_ip))
+            threads.append(thread)
+            thread.start()
 
-    def test_full(self):
-        """进行全面测试（TCP、UDP、多线程）"""
-        print("选择全面的网络性能测试...")
-        self.test_tcp()
-        self.test_udp()
-        self.test_multithread()
+        for thread in threads:
+            thread.join()  # 等待所有线程完成
+
+    @staticmethod
+    def start_multiple_servers(server_ips):
+        """启动多个iperf3服务器，每个IP绑定一个服务器"""
+        threads = []
+        for server_ip in server_ips:
+            thread = threading.Thread(target=Iperf3Test.run_server, args=(server_ip,))
+            threads.append(thread)
+            thread.start()
+
+        # 等待所有线程完成
+        for thread in threads:
+            thread.join()
+
+        print("所有服务器已停止。")
+
+    @staticmethod
+    def run_server(server_ip):
+        """启动iperf3服务器并绑定到指定的IP地址"""
+        print(f"正在启动iperf3服务器，绑定到 IP: {server_ip}...")
+        command = ["iperf3", "-s", "-B", server_ip, "--json"]
+
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
+        output = ""
+        while True:
+            line = process.stdout.readline()
+            if line:
+                output += line
+            elif not line and process.poll() is not None:
+                break  # 进程结束，退出循环
+
+        if output:
+            try:
+                json_output = json.loads(output)
+                Iperf3Test.save_log(json_output, server_ip, server_ip, "server")
+            except json.JSONDecodeError:
+                print(f"无法解析服务器日志 {server_ip}，跳过保存...")
