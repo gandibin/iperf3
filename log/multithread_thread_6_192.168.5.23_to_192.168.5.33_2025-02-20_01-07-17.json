@@ -1,0 +1,20 @@
+{
+    "start": {
+        "connected": [],
+        "version": "iperf 3.1.1",
+        "system_info": "CYGWIN_NT-10.0 DESKTOP-N9MHI2D 2.3.1(0.291/5/3) 2015-11-14 12:44 x86_64",
+        "timestamp": {
+            "time": "Wed, 19 Feb 2025 17:07:17 GMT",
+            "timesecs": 1739984837
+        },
+        "connecting_to": {
+            "host": "192.168.5.33",
+            "port": 5201
+        },
+        "cookie": "DESKTOP-N9MHI2D.1739984826.980799.00",
+        "tcp_mss_default": 0
+    },
+    "intervals": [],
+    "end": {},
+    "error": "error - unable to receive control message: Software caused connection abort"
+}

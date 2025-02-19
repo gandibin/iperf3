@@ -35,7 +35,7 @@ class Iperf3Test:
             command = ["iperf3", "-c", server_ip, "-t", "60", "--json", "-P", str(self.threads), "-B", client_ip]
             testype = "multithread"
         elif self.test_choice == '4':  # 双向测试
-            command = ["iperf3", "-c", server_ip, "-d", "-t", "5", "--json", "-B", client_ip]
+            command = ["iperf3", "-c", server_ip, "-d", "-t", "60", "--json", "-B", client_ip]
             testype = "bidirectional"
         else:
             print("无效的测试类型。")
@@ -137,7 +137,7 @@ class Iperf3Test:
                 json_output = json.loads(output)
                 Iperf3Test.save_log(json_output, server_ip, server_ip, "server")
             except json.JSONDecodeError:
-                print(output)
-                with open(f"server_log_{server_ip}.txt", 'w') as file:
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                with open(f"server_log_{server_ip}_{current_time}.txt", 'w') as file:
                     file.write(output)
                 print(f"无法解析服务器日志 {server_ip}，已保存为文本文件...")
