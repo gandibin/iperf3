@@ -1,0 +1,24 @@
+{
+    "start": {
+        "connected": [],
+        "version": "iperf 3.18",
+        "system_info": "CYGWIN_NT-10.0-22621 WIN-20250124JFD 3.5.4-1.x86_64 2024-08-25 16:52 UTC x86_64",
+        "timestamp": {
+            "time": "Wed, 19 Feb 2025 17:45:04 GMT",
+            "timesecs": 1739987104
+        },
+        "connecting_to": {
+            "host": "192.168.5.25",
+            "port": 5201
+        },
+        "cookie": "hhazxrp2fkp4ezs67fnazu4js6wlxisyudjt",
+        "target_bitrate": 100000000,
+        "fq_rate": 0,
+        "sock_bufsize": 0,
+        "sndbuf_actual": 65536,
+        "rcvbuf_actual": 65536
+    },
+    "intervals": [],
+    "end": {},
+    "error": "unable to read from stream socket: Resource temporarily unavailable"
+}
