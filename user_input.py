@@ -43,7 +43,11 @@ class UserInput:
         """根据设备选择返回一批IP地址"""
         a_ips = [f"192.168.5.{i}" for i in range(31, 31 + ip_count)]  # 192.168.5.31-40
         b_ips = [f"192.168.5.{i}" for i in range(21, 21 + ip_count)]  # 192.168.5.21-30
-
+        #如果选择1单条线测试要
+        if ip_count == 1:
+            lan_number = int(input("请输入测试的lan端口号1-10："))
+            a_ips = [f"192.168.5.{30+lan_number}"] 
+            b_ips = [f"192.168.5.{20+lan_number}"] 
         # 定义设备和设备类型的映射关系
         device_map = {
             'A': {
