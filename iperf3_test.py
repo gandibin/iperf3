@@ -48,7 +48,10 @@ class Iperf3Test:
             self.save_log(json_output, client_ip, server_ip, testype)
         except json.JSONDecodeError:
             print(result.stdout)
-            print(f"无法解析JSON输出，尝试直接保存 {client_ip} 到 {server_ip} 的日志...")
+            with open(f"{testype}_{server_ip}_to_{client_ip}_ports{str(len(self.client_ips))}.txt", 'w') as file:
+                file.write(result.stdout)
+            print(f"无法解析服务器日志 {server_ip}，已保存为文本文件...")
+
 
 
     def test_tcp(self):
@@ -135,4 +138,6 @@ class Iperf3Test:
                 Iperf3Test.save_log(json_output, server_ip, server_ip, "server")
             except json.JSONDecodeError:
                 print(output)
-                print(f"无法解析服务器日志 {server_ip}，跳过保存...")
+                with open(f"server_log_{server_ip}.txt", 'w') as file:
+                    file.write(output)
+                print(f"无法解析服务器日志 {server_ip}，已保存为文本文件...")
