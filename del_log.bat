@@ -7,8 +7,8 @@ if not exist "log" (
 )
 
 REM Move all .log files to the log folder
-move *.json log\ >nul
-move *.txt log\ >nul
+move *.json log2\ >nul
+move *.txt log2\ >nul
 
 echo Move completed.
 pause
