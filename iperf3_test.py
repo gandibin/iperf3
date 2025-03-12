@@ -102,12 +102,12 @@ class Iperf3Test:
         for thread in threads:
             thread.join()  # 等待所有线程完成
 
-    @staticmethod
-    def start_multiple_servers(server_ips):
+
+    def start_multiple_servers(self):
         """启动多个iperf3服务器，每个IP绑定一个服务器"""
         threads = []
-        for server_ip in server_ips:
-            thread = threading.Thread(target=Iperf3Test.run_server, args=(server_ip,))
+        for server_ip in self.server_ips:
+            thread = threading.Thread(target=self.run_server, args=(server_ip,))
             threads.append(thread)
             thread.start()
 
@@ -117,8 +117,7 @@ class Iperf3Test:
 
         print("所有服务器已停止。")
 
-    @staticmethod
-    def run_server(server_ip):
+    def run_server(self,server_ip):
         """启动iperf3服务器并绑定到指定的IP地址"""
         print(f"正在启动iperf3服务器，绑定到 IP: {server_ip}...")
         command = ["iperf3", "-s", "-B", server_ip, "--json"]
@@ -135,7 +134,7 @@ class Iperf3Test:
         if output:
             try:
                 json_output = json.loads(output)
-                Iperf3Test.save_log(json_output, server_ip, server_ip, "server")
+                self.save_log(json_output, server_ip, server_ip, "server")
             except json.JSONDecodeError:
                 current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
                 with open(f"server_log_{server_ip}_{current_time}.txt", 'w') as file:

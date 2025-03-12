@@ -8,23 +8,21 @@ def main():
         # 收集所有用户输入
         user_input = UserInput()
         user_input.collect_inputs()  # 收集所有输入
+        iperf3_instance = Iperf3Test(user_input.server_ips, user_input.client_ips, user_input.bandwidth, user_input.threads, user_input.test_choice)  #实例化控制单元
         
         # 判断设备类型，启动相应模式
         if user_input.device_type == 'S':
             # 服务器端模式，启动多个服务器
-            Iperf3Test.start_multiple_servers(user_input.server_ips)
-        elif user_input.device_type == 'C':
-            # 客户端模式，分别测试客户端和服务器的IP
-            iperf3_test = Iperf3Test(user_input.server_ips, user_input.client_ips, user_input.bandwidth, user_input.threads, user_input.test_choice)
-            
+            iperf3_instance.start_multiple_servers()
+        elif user_input.device_type == 'C':            
             if user_input.test_choice == '1':
-                iperf3_test.test_tcp()
+                iperf3_instance.test_tcp()
             elif user_input.test_choice == '2':
-                iperf3_test.test_udp()
+                iperf3_instance.test_udp()
             elif user_input.test_choice == '3':
-                iperf3_test.test_multithread()
+                iperf3_instance.test_multithread()
             elif user_input.test_choice == '4':
-                iperf3_test.test_bidirectional()
+                iperf3_instance.test_bidirectional()
             else:
                 print("无效选项，请重新选择。")
         else:

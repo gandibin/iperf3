@@ -11,7 +11,7 @@ class UserInput:
     
     def collect_inputs(self):
         """收集所有必要的输入"""
-        self.device = input("请选择你的设备 (A - 设备A 192.168.5.21-，B - 设备B 192.168.5.31-): ").strip().upper()
+        self.device = input("请选择你的设备 (A - 设备A 192.168.5.31-，B - 设备B 192.168.5.21-): ").strip().upper()
         
         # 检查设备是否有效
         if self.device not in ['A', 'B']:
