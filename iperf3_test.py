@@ -47,8 +47,9 @@ class Iperf3Test:
             # 保存日志
             self.save_log(json_output, client_ip, server_ip, testype)
         except json.JSONDecodeError:
-            print(result.stdout)
-            with open(f"{testype}_{server_ip}_to_{client_ip}_ports{str(len(self.client_ips))}.txt", 'w') as file:
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            ports = str(len(self.client_ips))
+            with open(f"{testype}_thread_{ports}_{client_ip}_to_{server_ip}_{current_time}.txt", 'w') as file:
                 file.write(result.stdout)
             print(f"无法解析服务器日志 {server_ip}，已保存为文本文件...")
 
