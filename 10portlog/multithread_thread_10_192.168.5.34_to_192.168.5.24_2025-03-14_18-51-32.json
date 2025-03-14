@@ -1,0 +1,10 @@
+{
+    "start": {
+        "connected": [],
+        "version": "iperf 3.18",
+        "system_info": "CYGWIN_NT-10.0-22621 WIN-20250124JFD 3.5.4-1.x86_64 2024-08-25 16:52 UTC x86_64"
+    },
+    "intervals": [],
+    "end": {},
+    "error": "the server is busy running a test. try again later"
+}
