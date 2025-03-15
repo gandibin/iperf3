@@ -1,0 +1,10 @@
+{
+    "start": {
+        "connected": [],
+        "version": "iperf 3.18",
+        "system_info": "CYGWIN_NT-10.0-19045 DESKTOP-J1C9BAD 3.5.4-1.x86_64 2024-08-25 16:52 UTC x86_64"
+    },
+    "intervals": [],
+    "end": {},
+    "error": "error - unable to start listener for connections: Cannot assign requested address"
+}
